@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import io
+import sys
 import numpy as np
 from collections import deque
 
@@ -18,6 +19,8 @@ password = "MadeByBoris15AndJay3"
 file_path2 = "/media/actimetre/Project01/Actim0019-1A_2026-04-13_141859.csv"
 file_path1 = "/media/actimetre/Project01/Actim0059-1A_2026-04-13_135804.csv"
 num_lines = 200  # Nombre de lignes a recuperer a chaque fois
+
+file_path1 = '/media/actimetre/Project01/' + sys.argv[1]
 
 # Configuration graphique
 interval_seconds = 0.200  # en secondes
