@@ -15,17 +15,19 @@ host = "172.20.163.110"
 port = 22
 username = "orangepi"
 password = "MadeByBoris15AndJay3"
-# file_path = "/media/actimetre/Project03/Actim0014-1A_2026-03-25_145446.csv"
-file_path2 = "/media/actimetre/Project01/Actim0019-1A_2026-04-13_141859.csv"
-file_path1 = "/media/actimetre/Project01/Actim0059-1A_2026-04-13_135804.csv"
 num_lines = 200  # Nombre de lignes a recuperer a chaque fois
 
-file_path1 = '/media/actimetre/Project01/' + sys.argv[1]
+if (len(sys.argv)==2):
+    file_name = sys.argv[1]
+else:
+    file_name = input("What is the data file name ?:")
+file_path = "/media/actimetre/Project01/" + file_name
+ActimId = file_name.split('-')[0]
 
 # Configuration graphique
 interval_seconds = 0.200  # en secondes
-fenetre_temps = 1  # Fenetre de temps affichee (en secondes)
-max_points = 2000    # Nombre max de points stockes
+fenetre_temps = 10  # Fenetre de temps affichee (en secondes)
+max_points = 10000    # Nombre max de points stockes
 t_start = 0.0
 
 # Buffer pour stocker les donnees
@@ -52,7 +54,7 @@ def init():
 
 
 def update(frame):
-    data = get_last_lines(ssh_client, file_path1, num_lines)
+    data = get_last_lines(ssh_client, file_path, num_lines)
     if data is None:
         print('no data during update')
         return line1, line2
@@ -63,7 +65,7 @@ def update(frame):
 
     if len(times)>0:
         x = times - t_start[0]
-        y1 = df.iloc[:-1,3]
+        # y1 = df.iloc[:-1,3]
         y2 = df.iloc[:-1,4]
 
         if len(x)>0:
@@ -73,15 +75,15 @@ def update(frame):
 
         # mise a jour des buffer
         buffer_x.append(x)
-        buffer_y1.append(y1)
+        # buffer_y1.append(y1)
         buffer_y2.append(y2)
 
         mask = [xi >= last_time for xi in buffer_x]
 
         x_show = np.array(buffer_x)- last_time + fenetre_temps
-        y1_show = np.array(buffer_y1)
+        # y1_show = np.array(buffer_y1)
         y2_show = np.array(buffer_y2)
-        line1.set_data(x_show, y1_show)
+        # line1.set_data(x_show, y1_show)
         line2.set_data(x_show, y2_show)
         # On ne garde que les points dans la fenetre
         # ax.set_xlim(x_show[-1]-fenetre_temps, x_show[-1])
@@ -99,7 +101,7 @@ ax.set_xlim(0, fenetre_temps)
 ax.set_ylim(-0.25, 0.25)
 ax.set_xlabel("Temps (s)")
 ax.set_ylabel("Accelerations (m.s-2)")
-ax.set_title(f"Oscilloscope en temps reel (fenetre glissante de {fenetre_temps}s)")
+ax.set_title(f"{ActimId} (fenetre glissante de {fenetre_temps}s)")
 ax.grid(True)
     
 # Creation du client SSH
@@ -109,7 +111,7 @@ ssh_client.connect(host, port=port, username=username, password=password)
 print(f"Connecte a {host}")
     
 # Get two lignes to extract t_start
-data = get_last_lines(ssh_client, file_path1, num_lines)
+data = get_last_lines(ssh_client, file_path, num_lines)
 if data is None:
     print('No data')
 df = pd.read_csv(data, header=None)
