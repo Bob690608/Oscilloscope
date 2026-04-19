@@ -26,7 +26,7 @@ ActimId = file_name.split('-')[0]
 
 # Configuration graphique
 interval_seconds = 0.200  # en secondes
-fenetre_temps = 10  # Fenetre de temps affichee (en secondes)
+fenetre_temps = 5  # Fenetre de temps affichee (en secondes)
 max_points = 10000    # Nombre max de points stockes
 t_start = 0.0
 
